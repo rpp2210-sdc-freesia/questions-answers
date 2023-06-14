@@ -24,7 +24,7 @@ export default function () {
   const params = {
     product_id: 1967
   };
-  const res = http.get('http://localhost:3000/qa/questions', params);
+  const res = http.get('http://localhost:4000/qa/questions', params);
 
   sleep(1);
 

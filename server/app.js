@@ -3,7 +3,17 @@ const redis = require("redis");
 const path = require("path");
 
 const client = require('../database/SQL').client;
-client.connect();
+const connectDB = async () => {
+  try {
+    await client.connect();
+    console.log('Connected to PostgreSQL')
+  } catch (err) {
+    console.error(`Failed to connect, retrying in 5 seconds... \n${err}`)
+    setTimeout(connectDB, 5000);
+  }
+};
+
+connectDB();
 
 const app = express();
 
@@ -12,7 +22,7 @@ let redisClient;
 (async () => {
   redisClient = redis.createClient({
     socket: {
-        host: 'localhost',
+        host: 'cache',
         port: '6379'
     },
     password: 'eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81'

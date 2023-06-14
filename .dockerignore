@@ -2,7 +2,6 @@
 .ipynb_checkpoints
 coverage
 node_modules
-.env
 data_set
 create_tables.sql
 sdc_dump.sql

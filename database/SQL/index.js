@@ -1,8 +1,8 @@
 const { Pool, Client } = require('pg');
 
-const client = new Client({
+const client = new Pool({
   user: 'postgres',
-  host: 'localhost', // use db if connecting with docker // use localhost if testing locally
+  host: 'db', // use db if connecting with docker // use localhost if testing locally
   database: 'sdc',
   password: 'mysecretpassword',
   port: 5432,

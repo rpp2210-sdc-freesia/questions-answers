@@ -1,6 +1,8 @@
+version: '3.8'
+
 services:
   db:
-    image: postgres
+    image: postgres:15.3-alpine3.18
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -10,8 +12,11 @@ services:
       - 5432:5432
     volumes:
       - db:/var/lib/postgresql/data
-      # - ./create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
-      # - ./data_set:/tmp/data_set
+      # - ./sdc_dump.sql:/docker-entrypoint-initdb.d/sdc_dump.sql
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
 
   cache:
     image: redis:7.0.11-alpine
@@ -22,7 +27,15 @@ services:
     volumes:
       - cache:/data
 
+  # load_balancer:
+  #   image: nginx:1.25.0-alpine
+  #   volumes:
+  #     - ./conf.d/default.conf:/etc/nginx/nginx.conf:ro
+  #   ports:
+  #     - 80:4000
+
   backend:
+    image: 127.0.0.1:5000/sdc
     build:
       context: .
       dockerfile: ./dockerfile
@@ -34,12 +47,17 @@ services:
       - PGHOST=db
       - REDIS_HOST=cache
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
     ports:
-      - 80:3000
+      - 3000:3000
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
 
 volumes:
   db:
     driver: local
   cache:
+    driver: local
+  load_balancer:
     driver: local
